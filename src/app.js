@@ -7,8 +7,30 @@ import './styles/app.css'
 
 function App() {
   // Use initialEmails for state
-  console.log(initialEmails)
   const [emails, setEmails] = useState(initialEmails)
+
+  const toggleRead = (target) => {
+    const updatedRead = emails.map(email => email === target ? {...email, read: !email.read} : email
+      )
+      setEmails(updatedRead)
+  }
+
+  const toggleStar = (target) => {
+    const updatedStar = emails.map(email => email === target ? {...email, starred: !email.starred} : email
+      )
+      setEmails(updatedStar)
+  }
+
+  const [hideRead, setHideRead] = useState(false)
+
+  const getEmails = (hideRead) => {
+    if (hideRead === false) {return emails}
+
+    const updatedEmails = emails.filter(email => email.read === false)
+    return updatedEmails
+  }
+
+  const updatedEmails = getEmails(hideRead)
 
   return (
     <div className="app">
@@ -31,26 +53,33 @@ function App() {
           </li>
 
           <li className="item toggle">
-            <label for="hide-read">Hide read</label>
+            <label htmlFor="hide-read">Hide read</label>
             <input
               id="hide-read"
               type="checkbox"
-              checked={false}
-              // onChange={() => {}}
+              checked={hideRead}
+              onClick={() => {
+                setHideRead(!hideRead)
+              }}
             />
           </li>
         </ul>
       </nav>
-      <main className="emails">{emails.map((email, index) => {
+      <main className="emails">{updatedEmails.map((email) => {
         return (
-          <li className={email.read ? 'email read' : 'email unread'} key={index}>
+          <li className={email.read ? 'email read' : 'email unread'} key={email.id}>
           <div className="select">
           <input
+            onClick={() => toggleRead(email)}
+            checked={email.read}
             className="select-checkbox"
             type="checkbox"/>
           </div>
           <div className="star">
           <input
+            onClick={() => {
+              toggleStar(email) 
+            }}
             className="star-checkbox"
             type="checkbox"
           />
